@@ -1,0 +1,11 @@
+
+# godist
+
+Some simple scripts to distribute tools written in Go, used by
+[modd](https://github.com/cortesi/modd) and
+[devd](https://github.com/cortesi/devd).
+
+Note that these scripts depend on the structure of modd and devd, and although
+they can easily be generalized, they're not really meant to be portable to
+other projects. That said, I'd accept pull requests to make godist useful to
+others.
