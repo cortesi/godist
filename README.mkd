@@ -9,3 +9,7 @@ Note that these scripts depend on the structure of modd and devd, and although
 they can easily be generalized, they're not really meant to be portable to
 other projects. That said, I'd accept pull requests to make godist useful to
 others.
+
+The following external tools are required:
+
+    https://github.com/samertm/homebrew-go-resources

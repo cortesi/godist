@@ -1,8 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import click
 import contextlib
-import fnmatch
-import glob
 import os
 import shutil
 import subprocess
@@ -36,7 +34,7 @@ def chdir(newdir):
 
 
 def version():
-    print "Installing locally"
+    print("Installing locally")
     subprocess.call(["go", "install", "./cmd/%s"%NAME])
     p = subprocess.Popen([NAME, "--version"], stderr=subprocess.PIPE)
     return p.communicate()[1].strip()
@@ -51,7 +49,7 @@ def build(vers, goos, goarch, suffix, archive):
     if goos == "windows":
         binname = binname + ".exe"
 
-    print "building to ", dstdir
+    print("building to ", dstdir)
     if os.path.exists(dstdir):
         shutil.rmtree(dstdir)
     os.makedirs(dstdir)
@@ -71,14 +69,14 @@ def build(vers, goos, goarch, suffix, archive):
 
     with chdir(DSTDIR):
         if archive == "tgz":
-            print "\tmaking .tgz"
+            print("\tmaking .tgz")
             subprocess.Popen(
                 ["tar", "-czvf", pkgdst, basename],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
             ).communicate()
         elif archive == "zip":
-            print "\tmaking .zip"
+            print("\tmaking .zip")
             subprocess.Popen(
                 ["zip", "-r", pkgdst, basename],
                 stdout=subprocess.PIPE,
@@ -86,52 +84,11 @@ def build(vers, goos, goarch, suffix, archive):
             ).communicate()
 
 
-RICE_EXCLUDE = [
-    "./.git"
-]
-
-def rice_excluded(root):
-    for ex in RICE_EXCLUDE:
-        if root.startswith(ex):
-            return True
-
-
-@contextlib.contextmanager
-def ricer():
-    print("building rice inclusions...")
-    for root, _, _ in os.walk("."):
-        if rice_excluded(root):
-            continue
-        with chdir(root):
-            p = subprocess.Popen(
-                ["rice", "embed-go"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            output = p.communicate()
-            p.wait()
-            # A successful build if exit code is 0, and stdout is empty
-            if p.returncode == 0 and not output[0]:
-                print("\t %s"%root)
-    print
-
-    yield
-
-    print("\ncleaning rice files...")
-    for root, dirs, files in os.walk("."):
-        for basename in files:
-            if basename.endswith("rice-box.go"):
-                    filename = os.path.join(root, basename)
-                    print("\t %s"%filename)
-                    os.unlink(filename)
-
-
-
 @click.command()
 @click.option("--arch", default=None, help="Build just this architecture")
 def main(arch):
     v = version()
-    print "Version is: ", v
+    print("Version is: ", v)
     subprocess.call(["mkdir", "-p", os.path.join(DSTDIR, "packages")])
     print
 
@@ -139,10 +96,8 @@ def main(arch):
     if arch:
         archs = [i for i in ARCHS if arch in i]
 
-    with ricer():
-        for i in archs:
-            build(v, *i)
-
+    for i in archs:
+        build(v, *i)
 
 
 if __name__ == "__main__":
