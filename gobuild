@@ -14,6 +14,7 @@ DSTDIR = "./tmp"
 ARCHS = [
     ("darwin", "amd64", "osx64", "tgz"),
     ("windows", "amd64", "windows64", "zip"),
+    ("windows", "386", "windows32", "zip"),
     ("linux", "amd64", "linux64", "tgz"),
     ("linux", "arm", "linuxARM", "tgz"),
     ("netbsd", "amd64", "netbsd64", "tgz"),
@@ -37,7 +38,7 @@ def version():
     print("Installing locally")
     subprocess.call(["go", "install", "./cmd/%s"%NAME])
     p = subprocess.Popen([NAME, "--version"], stderr=subprocess.PIPE)
-    return p.communicate()[1].strip()
+    return p.communicate()[1].strip().decode("ascii")
 
 
 def build(vers, goos, goarch, suffix, archive):
